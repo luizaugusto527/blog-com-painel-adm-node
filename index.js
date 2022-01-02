@@ -1,6 +1,9 @@
 const express = require('express')
 const connection = require("./database/database")
 
+const categoriesController = require('./categories/CategoriesController')
+const articlesController = require('./articles/ArticlesController')
+
 const app = express()
 
 app.set('view engine','ejs')
@@ -12,6 +15,9 @@ app.use(express.json())
 connection.authenticate()
 .then(()=>console.log("Conexão com sucesso"))
 .catch((error)=>console.log(error))
+
+app.use('/',categoriesController)
+app.use('/',articlesController)
 
 app.get('/',(req,res)=>{
     res.render("index")
