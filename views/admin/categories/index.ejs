@@ -28,8 +28,10 @@
                                 <%= category.slug %>
                             </td>
                             <td>
-                                <button class="btn btn-warning mt-2">Editar</button>
-                                <form action="/categories/delete" method="post" style="display:inline">
+                                <a href="/admin/categories/edit/<%= category.id %>"
+                                    class="btn btn-warning mt-2">Editar</a>
+                                <form action="/categories/delete" method="post" style="display:inline"
+                                    onsubmit="confirmDelete(event,this)">
                                     <input type="hidden" name="id" value=" <%= category.id %>">
                                     <button class="btn btn-danger mt-2">Deletar</button>
                                 </form>
@@ -39,5 +41,12 @@
                 </tbody>
             </table>
         </div>
+        <script>
+            function confirmDelete(e, form) {
+                event.preventDefault()
+                let confirm = window.confirm("Tem certeza que deseja deletar?")
+                if (confirm) form.submit();
+            }
+        </script>
 
         <%- include ('../../partials/footer.ejs');%>
