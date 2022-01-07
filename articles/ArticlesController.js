@@ -3,7 +3,7 @@ const router = express.Router()
 const Category = require('../categories/categories')
 const Article = require("./article")
 const slugify = require("slugify")
-const article = require('./article')
+
 
 router.get('/admin/articles', (req, res) => {
     Article.findAll({
@@ -63,7 +63,7 @@ router.post("/articles/delete", (req, res) => {
 })
 router.get("/admin/articles/edit/:id", (req, res) => {
     let id = req.params.id
-    article.findByPk(id).then(article => {
+    Article.findByPk(id).then(article => {
         if (article != undefined) {
 
             Category.findAll().then(categories => {
@@ -82,7 +82,7 @@ router.post("/articles/update", (req, res) => {
     let title = req.body.title
     let category = req.body.category
 
-    article.update({ title: title, body: body, categoryId: category, slug: slugify(title) }, {
+    Article.update({ title: title, body: body, categoryId: category, slug: slugify(title) }, {
         where: { id: id }
     }).then(() => {
         res.redirect("/admin/articles")
@@ -90,6 +90,33 @@ router.post("/articles/update", (req, res) => {
         res.redirect("/")
     })
 
+})
+
+
+router.get("/articles/page/:num", (req, res) => {
+    let num = Number(req.params.num)
+    let offset = (num - 1) * 2
+
+    Article.findAndCountAll({
+        limit: 2,
+        offset: offset,
+        order: [['id', 'DESC']]
+
+    }).then(article => {
+        if (offset + 2 >= article.count) {
+            next = false;
+        } else {
+            next = true;
+        }
+        let result = {
+            page: num,
+            next: next,
+            article: article
+        }
+        Category.findAll().then(categories => {
+            res.render("admin/articles/page", { result: result, categories: categories })
+        })
+    })
 })
 
 module.exports = router
