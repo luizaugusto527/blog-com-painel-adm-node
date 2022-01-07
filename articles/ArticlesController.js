@@ -61,5 +61,35 @@ router.post("/articles/delete", (req, res) => {
         res.redirect("/admin/articles")
     }
 })
+router.get("/admin/articles/edit/:id", (req, res) => {
+    let id = req.params.id
+    article.findByPk(id).then(article => {
+        if (article != undefined) {
+
+            Category.findAll().then(categories => {
+                res.render("admin/articles/edit", { categories: categories, article: article })
+
+            })
+        } else {
+            res.redirect("/")
+        }
+    })
+})
+
+router.post("/articles/update", (req, res) => {
+    let id = req.params.id
+    let body = req.params.body
+    let title = req.body.title
+    let category = req.body.category
+
+    article.update({ title: title, body: body, categoryId: category, slug: slugify(title) }, {
+        where: { id: id }
+    }).then(() => {
+        res.redirect("/admin/articles")
+    }).catch(() => {
+        res.redirect("/")
+    })
+
+})
 
 module.exports = router
