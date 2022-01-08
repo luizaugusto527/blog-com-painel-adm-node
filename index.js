@@ -1,5 +1,6 @@
 const express = require('express')
 const connection = require("./database/database")
+const session = require('express-session')
 
 const categoriesController = require('./categories/CategoriesController')
 const articlesController = require('./articles/ArticlesController')
@@ -10,6 +11,11 @@ const Category = require('./categories/categories')
 const User = require('./users/users')
 
 const app = express()
+
+app.use(session({
+    secret:"billiejean",
+    cookie:{maxAge:30000}
+}))
 
 app.set('view engine', 'ejs')
 
@@ -25,6 +31,24 @@ connection.authenticate()
 app.use('/', categoriesController)
 app.use('/', articlesController)
 app.use('/', UsersController)
+
+app.get("/session",(req,res)=>{
+    req.session.treinameno = "Formação Node.Js"
+    req.session.email = "luiz@gmail.com"
+    req.session.user = {
+        username: "Luiz",
+        id:10
+    }
+    res.send("sessão gerada")
+})
+
+app.get("/leitura",(req,res)=>{
+    res.json({
+        treinamento: req.session.treinameno,
+        user: req.session.user
+    })
+})
+
 
 app.get('/', (req, res) => {
     Article.findAll({ order: [['id', 'DESC']], limit: 2 }).then(articles => {
