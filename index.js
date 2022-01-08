@@ -3,9 +3,11 @@ const connection = require("./database/database")
 
 const categoriesController = require('./categories/CategoriesController')
 const articlesController = require('./articles/ArticlesController')
+const UsersController = require('./users/UsersController')
 
 const Article = require('./articles/article')
 const Category = require('./categories/categories')
+const User = require('./users/users')
 
 const app = express()
 
@@ -22,6 +24,7 @@ connection.authenticate()
 
 app.use('/', categoriesController)
 app.use('/', articlesController)
+app.use('/', UsersController)
 
 app.get('/', (req, res) => {
     Article.findAll({ order: [['id', 'DESC']], limit: 2 }).then(articles => {
@@ -71,6 +74,7 @@ app.get("/category/:slug", (req, res) => {
     })
 })
 
+
 app.listen(8080, () => {
-    console.log("Servidor está rodando");
+    console.log("Servidor está rodando em http://localhost:8080");
 })
