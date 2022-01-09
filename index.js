@@ -8,13 +8,13 @@ const UsersController = require('./users/UsersController')
 
 const Article = require('./articles/article')
 const Category = require('./categories/categories')
-const User = require('./users/users')
+
 
 const app = express()
 
 app.use(session({
     secret:"billiejean",
-    cookie:{maxAge:30000}
+    cookie:{maxAge:3000000}
 }))
 
 app.set('view engine', 'ejs')
@@ -33,8 +33,6 @@ app.use('/', articlesController)
 app.use('/', UsersController)
 
 app.get("/session",(req,res)=>{
-    req.session.treinameno = "Formação Node.Js"
-    req.session.email = "luiz@gmail.com"
     req.session.user = {
         username: "Luiz",
         id:10
@@ -44,7 +42,6 @@ app.get("/session",(req,res)=>{
 
 app.get("/leitura",(req,res)=>{
     res.json({
-        treinamento: req.session.treinameno,
         user: req.session.user
     })
 })
